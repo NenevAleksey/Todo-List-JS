@@ -6,7 +6,7 @@ body {
     font-size: 1.2rem;
 }
 header {
-    background-color: mediumorchid;
+    background-color: rgb(95, 211, 85);
     color: white;
     height: 100px;
     padding: 2rem 1rem;
@@ -31,13 +31,13 @@ input[type="text"] {
 }
 form > button {
     cursor: pointer;
-    background-color: mediumorchid;
+    background-color: rgb(95, 211, 85);
     color: white;
     border: none;
     padding: 0.5rem 0.8rem;
 }
 form > button:hover {
-    background-color: violet;
+    background-color: rgba(95, 211, 85, 0.805);
 }
 
 ul {
