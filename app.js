@@ -1,5 +1,6 @@
 //глобальные переменные
 const todoList = document.getElementById('todo-list');
+const userSelect = document.getElementById('user-todo');
 let todos = [];
 let users = [];
 
@@ -13,7 +14,7 @@ function getUserName(userId) {
 }
 
 //отрисовка задачи на странице
-function printTodo({userId, id, title, completed}) {
+function printTodo({ userId, id, title, completed }) {
    const li = document.createElement('li');
    li.dataset.id = id;
    li.className = 'todo-item';
@@ -32,11 +33,23 @@ function printTodo({userId, id, title, completed}) {
    todoList.prepend(li);
 }
 
+//добавить пользователей в выпадающий список.
+function createUserOption(user) {
+   const option = document.createElement('option');
+   option.value = user.id;
+   option.innerText = user.name;
+
+   userSelect.append(option)
+}
+
 //логика события
 function initApp() {
    Promise.all([getAllTodos(), getAllUser()]).then(values => {
       [todos, users] = values;
+
+      //отправка в разметку
       todos.forEach(todo => printTodo(todo));
+      users.forEach(user => createUserOption(user))
    })
 }
 
