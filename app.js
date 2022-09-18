@@ -30,6 +30,7 @@ function printTodo({ userId, id, title, completed }) {
    const close = document.createElement('span');
    close.innerHTML = '&times;';
    close.className = 'close';
+   close.addEventListener('click', handleClose);
 
    li.prepend(status);
    li.append(close);
@@ -45,6 +46,16 @@ function createUserOption(user) {
    userSelect.append(option)
 }
 
+//удаление todo из DOM
+function removeTodo(todoId) {
+   todos = todos.filter(todo => todo.id !== todoId);
+
+   const todo = todoList.querySelector(`[data-id="${todoId}"]`);
+   todo.querySelector('input').removeEventListener('change', handleTodoChange);
+   todo.querySelector('.close').removeEventListener('click', handleClose);
+   todo.remove();
+}
+
 //логика события
 function initApp() {
    Promise.all([getAllTodos(), getAllUser()]).then(values => {
@@ -55,7 +66,6 @@ function initApp() {
       users.forEach(user => createUserOption(user))
    })
 }
-
 function handleSubmit(event) {
    event.preventDefault();
 
@@ -65,13 +75,19 @@ function handleSubmit(event) {
       completed: false,
    })
 }
-
 function handleTodoChange() {
    const todoId = this.parentElement.dataset.id;
    const completed = this.checked;
 
    toggleStatusTodo(todoId, completed)
 }
+function handleClose() {
+   const todoId = this.parentElement.dataset.id;
+
+   deleteTodo(todoId);
+}
+
+
 
 //получение задач и пользователей с сервера
 async function getAllUser() {
@@ -80,14 +96,12 @@ async function getAllUser() {
 
    return data;
 }
-
 async function getAllTodos() {
    const response = await fetch('https://jsonplaceholder.typicode.com/todos');
    const data = await response.json();
 
    return data;
 }
-
 async function createTodo(todo) {
    const response = await fetch('https://jsonplaceholder.typicode.com/todos',
       {
@@ -102,7 +116,6 @@ async function createTodo(todo) {
 
    printTodo(newTodo)
 }
-
 async function toggleStatusTodo(todoId, completed) {
    const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,
       {
@@ -116,5 +129,19 @@ async function toggleStatusTodo(todoId, completed) {
 
    if(!response.ok) {
       //error
+   }
+}
+async function deleteTodo(todoId) {
+   const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,
+      {
+         method: 'DELETE',
+         headers: {
+            'Content-Type': 'application/json'
+         }
+      }
+   );
+
+   if(response.ok) {
+      removeTodo(todoId);
    }
 }
