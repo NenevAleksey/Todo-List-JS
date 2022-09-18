@@ -25,6 +25,7 @@ function printTodo({ userId, id, title, completed }) {
    const status = document.createElement('input');
    status.type = 'checkbox';
    status.checked = completed;
+   status.addEventListener('change', handleTodoChange);
 
    const close = document.createElement('span');
    close.innerHTML = '&times;';
@@ -54,6 +55,7 @@ function initApp() {
       users.forEach(user => createUserOption(user))
    })
 }
+
 function handleSubmit(event) {
    event.preventDefault();
 
@@ -62,6 +64,13 @@ function handleSubmit(event) {
       title: form.todo.value,
       completed: false,
    })
+}
+
+function handleTodoChange() {
+   const todoId = this.parentElement.dataset.id;
+   const completed = this.checked;
+
+   toggleStatusTodo(todoId, completed)
 }
 
 //получение задач и пользователей с сервера
@@ -92,4 +101,20 @@ async function createTodo(todo) {
    const newTodo = await response.json();
 
    printTodo(newTodo)
+}
+
+async function toggleStatusTodo(todoId, completed) {
+   const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${todoId}`,
+      {
+         method: 'PATCH',
+         body: JSON.stringify({completed: completed}),
+         headers: {
+            'Content-Type': 'application/json'
+         }
+      }
+   );
+
+   if(!response.ok) {
+      //error
+   }
 }
